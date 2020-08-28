@@ -7,39 +7,48 @@ public class Main {
    
     public static int gerarNumeroAleatorio(int fim){
         return new Random().nextInt(fim);
-    }    
+    }  
+    public static Cachorro addCachorro(){
+        String[] nomesCachorro = {"Thor", "Luke", "Theo", "Bily", "Chico", "Fred", "Logan", "Brutus", "Rocky", "Romeu"};
+        
+        String nome = nomesCachorro[gerarNumeroAleatorio(nomesCachorro.length)];
+        int idade = gerarNumeroAleatorio(20);
+        
+        var cachorro = new Cachorro(nome, ESPECIES[0], idade);
+
+        return cachorro;
+    }
+    public static Cavalo addCavalo(){
+        String[] nomeCavalo = {"Coronel", "Soberano", "Sucesso", "Sabiá", "Pirata", "Níger", "Albino", "Zorro", "Eclipse", "Holywood"};
+                
+        String nome = nomeCavalo[gerarNumeroAleatorio(nomeCavalo.length)];
+        int idade = gerarNumeroAleatorio(20);
+        
+        var cavalo = new Cavalo(nome, ESPECIES[1], idade);
+        
+        return cavalo;
+    }
+    public static Preguica addPreguica(){
+         String[] nomePreguica = {"Beiçola", "Bigodes", "Travolta", "Poepye", "Batman", "Choné", "Buzz", "Dengosa", "Contente", "Careta"};
+                
+        String nome = nomePreguica[gerarNumeroAleatorio(nomePreguica.length)];
+        int idade = gerarNumeroAleatorio(20);
+        
+        var preguica = new Preguica(nome, ESPECIES[2], idade);
+        
+        return preguica;
+    }
+
     public static Animal createAnimal(String especie){
         switch(especie){
             case "Cachorro" -> {
-                String[] nomesCachorro = {"Thor", "Luke", "Theo", "Bily", "Chico", "Fred", "Logan", "Brutus", "Rocky", "Romeu"};
-                
-                String nome = nomesCachorro[gerarNumeroAleatorio(nomesCachorro.length)];
-                int idade = gerarNumeroAleatorio(20);
-                
-                var cachorro = new Cachorro(nome, especie, idade);
-                
-                return cachorro;
+                return addCachorro();
             }
             case "Cavalo" -> {
-                String[] nomeCavalo = {"Coronel", "Soberano", "Sucesso", "Sabiá", "Pirata", "Níger", "Albino", "Zorro", "Eclipse", "Holywood"};
-                
-                String nome = nomeCavalo[gerarNumeroAleatorio(nomeCavalo.length)];
-                int idade = gerarNumeroAleatorio(20);
-                
-                var cavalo = new Cavalo(nome, especie, idade);
-                
-                return cavalo;
+                return addCavalo();
             }
             case "Preguiça" -> {
-                String[] nomePreguica = {"Beiçola", "Bigodes", "Travolta", "Poepye", "Batman", "Choné", "Buzz", "Dengosa", "Contente", "Careta"};
-                
-                String nome = nomePreguica[gerarNumeroAleatorio(nomePreguica.length)];
-                int idade = gerarNumeroAleatorio(20);
-                
-                var preguica = new Preguica(nome, especie, idade);
-                
-                return preguica;
-                
+                return addPreguica(); 
             }
         }
        return new Animal();
