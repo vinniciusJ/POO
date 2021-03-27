@@ -115,8 +115,8 @@ public class MeansOfTransport {
             "Marca: " + this.brand + "\n" +
             "Modelo: " + this.model + "\n" + 
             "Ano de lançamento: " + this.releaseYear + "\n" +
-            "Peso: " + this.weight + "\n" +
-            "Tipo de combustível: " + this.typeFuel + " Kg \n" +
+            "Peso: " + this.weight + " Kg \n" +
+            "Tipo de combustível: " + this.typeFuel + "\n" +
             "Quantidade máxima de litros no tanque: " + this.maxLitersInTank + " Litros \n"
         );
     }
