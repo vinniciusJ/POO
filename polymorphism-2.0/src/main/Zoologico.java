@@ -45,6 +45,8 @@ public class Zoologico {
             if(podeCorrer){
                 animal.correr();
             }
+            
+            System.out.println("------------------");
         }
     }
 }
