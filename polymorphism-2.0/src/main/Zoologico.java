@@ -19,7 +19,7 @@ public class Zoologico {
     public static void main(String[] args) {
         var zoo = new Zoologico();
         
-        for(var i : new int[10]){
+        for(var i = 0; i < 10; i++){
             if(zoo.animais.isEmpty()){
                 zoo.animais.add(new Cavalo());
             }
