@@ -130,11 +130,11 @@ public class GameController {
     static public void initialize(){
         Deck.initialize();
         
-        var deck = Deck.getShuffledDeck();
+        var shuffledDeck = Deck.getShuffledDeck();
         
         // Transformando o retorno de `.subList` em um ArrayList
-        var playerCards = new ArrayList<Card>(deck.subList(0, ((int) deck.size() / 2)));
-        var computerCards = new ArrayList<Card>(deck.subList(((int) deck.size() / 2), deck.size()));
+        var playerCards = new ArrayList<Card>(shuffledDeck.subList(0, ((int) shuffledDeck.size() / 2)));
+        var computerCards = new ArrayList<Card>(shuffledDeck.subList(((int) shuffledDeck.size() / 2), shuffledDeck.size()));
         
         var player = new Player(playerCards);
         var computer = new Player(computerCards);
