@@ -14,8 +14,8 @@ import java.util.ArrayList;
  */
 public class GameController {
     private Game game;
-    private GameState gameState;
-    private View view;
+    private GameState gameState; // Contém as informações mais recentes do Player e do Computador e é gerado a cada rodada
+    private View view; // Métodos para impressão dos resultados
     
     GameController(Game game, GameState gameState, View view){
         this.game = game;
@@ -23,13 +23,17 @@ public class GameController {
         this.view = view;
     }
     
+    // Pegar o indíce da carta que o player jogou
     public int getPlayerCardChose(){
         var playerCardPosition = 0;
         
+        // O uso do try-catch é necessário pq tanto o `Utils.readInputFromConsole` e o `Integer.parseInt` podem gerar `Exceptions`
         try{
             playerCardPosition = Integer.parseInt(Utils.readInputFromConsole());
         }
         catch(Exception exp){
+            // Como são duas Exceptions diferentes e são instâncias de `Exception` eu diferencio elas pela menssagem
+            
             if(exp.getMessage().equals("Você precisa informar um valor")){
                 this.view.displayMessageError(exp.getMessage());
             }
@@ -37,30 +41,26 @@ public class GameController {
                 this.view.displayMessageError("Você deve inserir um número.");
             }
             
-            this.play();
+            this.playRound();
         }
         
         return playerCardPosition;
     }
     
+    // Método que verifica qual carta é a maior e retorna a maior carta
+    
     public Card verifyBiggerCard(Card firstOpt, Card secondOpt){
         var specialCards = this.getGameState().getSpecialCards();
+        
+        // Essa era a importância do `Deck.cards` ser inicializado na devida ordem e não sofrer nenhuma alteração
+        // Nesse ponto, eu pego os índices das duas cartas e uso com o verificador de qual é o melhor
         
         var firstOptionIndex = Deck.getCards().indexOf(firstOpt);
         var secondOptionIndex = Deck.getCards().indexOf(secondOpt);
         
-        if(firstOptionIndex == secondOptionIndex){
-            var suitFirstOptionIndex = Deck.SUITS.indexOf(firstOpt.getSuit());
-            var suitSecondOptionIndex = Deck.SUITS.indexOf(firstOpt.getSuit());
-            
-            if(suitFirstOptionIndex > suitSecondOptionIndex){
-                return firstOpt;
-            }
-            else if(suitFirstOptionIndex < suitSecondOptionIndex){
-                return secondOpt;
-            }
-        }
-        else if(firstOptionIndex > secondOptionIndex){
+        // Primeiro eu verifico qual é a maior pelo index e depois verifico se a menor carta não é uma carta especial, uma manilha
+        
+        if(firstOptionIndex > secondOptionIndex){
             var isSecondOptAnSpecialCard = specialCards.contains(secondOpt);
             
             return isSecondOptAnSpecialCard ? secondOpt : firstOpt;
@@ -70,51 +70,76 @@ public class GameController {
             
             return isFirstOptAnSpecialCard ? firstOpt : secondOpt;
         }
-        
-        return firstOpt;
+        else {
+            // Caso elas sejam iguais, eu retorno uma carta nova vazia
+            
+            return new Card();
+        }
+ 
     }
     
-    public void play(){
+    public void playRound(){
+        // Criando um estado novo a cada Round
         this.gameState = GameController.createGameState(this.game);
         
-        this.view.displayGame(getGameState());
-        
-        var playerCardChose = this.getPlayerCardChose();
-        var computerCardChose = Utils.generateRandomNumber(getGameState().getComputerQttCards());
-        
-        try{
-            var playerCard = this.game.getPlayer().playCard(playerCardChose);
-            var computerCard = this.game.getComputer().playCard(computerCardChose);
-            
-            var winnerCard = this.verifyBiggerCard(playerCard, computerCard);
-            var hasPlayerWon = winnerCard.equals(playerCard);
-            
-            var turnedCard = this.getGameState().getTurnedCard();
-            
-            if(hasPlayerWon){
-                this.game.getPlayer().earnCard(computerCard);
-                this.game.getComputer().loseCard(computerCard);
-            }
-            else{
-                this.game.getComputer().earnCard(playerCard);
-                this.game.getPlayer().loseCard(playerCard);
-            }
-           
-            if(this.gameState.isEnded()){
-                var winner = this.gameState.getPlayerQttCards() == 0 ? this.game.getComputer() : this.game.getPlayer();
+        // Verifica se o 
+        if(this.gameState.isEnded()){
+            var winner = this.gameState.getPlayerQttCards() == 0 ? this.game.getComputer() : this.game.getPlayer();
+
+            this.gameState.setWinner(winner);
+        }
+        else{
+                   
+            // Mostrando o vira, as manilhas, a quantidade de cartas dos jogadores e as cartas do jogador
+            this.view.displayGame(this.gameState);
+
+            var playerCardChose = this.getPlayerCardChose();
+            var computerCardChose = Utils.generateRandomNumber(getGameState().getComputerQttCards());
+
+            try{
+                var playerCard = this.game.getPlayer().playCard(playerCardChose);
+                var computerCard = this.game.getComputer().playCard(computerCardChose);
+
+                var winnerCard = this.verifyBiggerCard(playerCard, computerCard);
+
+                // Verificando qual `Player` ganhou e se um ganhou
+
+                var hasPlayerWon = winnerCard.equals(playerCard);
+                var hasComputerWon = winnerCard.equals(computerCard);
+
+                var turnedCard = this.getGameState().getTurnedCard();
+
+                // Aqui caso o player tenha ganhado ele recebe a carta do computador e senão ele perde a carta para o computador
+                if(hasPlayerWon){
+                    this.game.getPlayer().earnCard(computerCard);
+                    this.game.getComputer().loseCard(computerCard);
+                }
+                else if(hasComputerWon){
+                    this.game.getComputer().earnCard(playerCard);
+                    this.game.getPlayer().loseCard(playerCard);
+                }
                 
-                this.gameState.setWinner(winner);
+                // Na hora de mostrar o vencedor eu verifico se um player venceu, se sim eu mostro vitória ou derrota para o Player
+                // Se não eu mostro empate
+                
+                if(hasComputerWon || hasPlayerWon){
+                    this.view.displayRoundWinner(turnedCard, playerCard, computerCard, hasPlayerWon);
+                }
+                else {
+                    this.view.displayRoundWinner(turnedCard, playerCard, computerCard);
+                }
+
             }
-            
-            this.view.displayRoundWinner(turnedCard, playerCard, computerCard, hasPlayerWon);
+            catch(Exception excp){
+                this.view.displayMessageError(excp.getMessage());
+
+                this.playRound();
+            }
         }
-        catch(Exception excp){
-            this.view.displayMessageError(excp.getMessage());
-            
-            //this.play();
-        }
+ 
     }
-    
+    // Métodos estático que recebe um `game` como parametro e cria um `gameState` todo round
+    // O `gameState` é muito importante na View, pois o gameState passa somente as informações que a View precisa e nada mais
     static private GameState createGameState(Game game){
         var turnedCard = Deck.generateTurnedCard();
         var specialCards = Deck.generateSpecialCards(turnedCard);
@@ -128,7 +153,7 @@ public class GameController {
     }
     
     static public void initialize(){
-        Deck.initialize();
+        Deck.initialize(); // Inicializando o baralho
         
         var shuffledDeck = Deck.getShuffledDeck();
         
@@ -145,12 +170,16 @@ public class GameController {
         
         var controller = new GameController(game, gameState, view);
         
+        // Enquanto o `gameState.isEnded` for false, ele continuará jogando
+        // Dessa forma o `gameState` tem que ser atualizado a cada rodada
+        
         while(!controller.getGameState().isEnded()){
-            controller.play();
+            controller.playRound();
         }
         
         controller.getGame().setFinishedAt(System.currentTimeMillis());      
 
+        // Verificando se o ganhador foi o Player ou o Computador
         var hasPlayerWon = controller.gameState.getWinner().equals(controller.game.getPlayer());
         var timeSpent = controller.game.getFinishedAt() - controller.game.getStartedAt();
               

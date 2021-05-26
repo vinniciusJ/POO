@@ -15,6 +15,8 @@ import java.util.Scanner;
  *
  * @author Vinicius Jimenez
  */
+
+// Separei algumas funções que uso em outras classes em um classe Util que só contém métodos estáticos
 public class Utils {
     static public int generateRandomNumber(int max){
         var randomGenerator = new Random();
@@ -34,6 +36,7 @@ public class Utils {
         return result;
     }
     
+    // Transformando o tempo em milisegundos em uma string com o seguinte formato `hh:mm:ss`
     static public String timeAsString(long timeInMilliseconds){
         var seconds = Math.ceil(timeInMilliseconds / 1000.0);
         var minutes = Math.ceil(timeInMilliseconds / 60000.0);

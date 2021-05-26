@@ -32,6 +32,7 @@ public class View {
         return changeStringColor(status ? "red" : "reset", card.toString());
     }
     
+    // Método que configura a cor da String das cartas do naipe ♦ e ♥ para vermelho
     static private ArrayList<String> setCardsColorsBySuit(ArrayList<Card> cards){
         var coloredCards = new ArrayList<String>();
         
@@ -93,6 +94,29 @@ public class View {
             System.exit(1);
         }
     }
+    
+    public void displayRoundWinner(Card turnedCard, Card playerCard, Card computerCard){
+        var coloredTurnedCard = View.setCardColorsBySuit(turnedCard);
+        var coloredPlayerCard = View.setCardColorsBySuit(playerCard);
+        var coloredComputerCard = View.setCardColorsBySuit(computerCard);
+        
+        var message = (
+            "O ROUND TERMINOU EMPATADO\n\n" + 
+            "Vira: " + coloredTurnedCard + "\n" + 
+            "Carta do computador: " + coloredComputerCard + "\n" + 
+            "Sua Carta: " + coloredPlayerCard + "\n"
+        );
+        
+        System.out.println(message);
+        System.out.println("-------------------------------\n");
+        
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            System.exit(1);
+        }
+    }
+    
     
     public void displayGameWinner(boolean hasPlayerWon, long timeSpent){
         var timeSpentAsString = Utils.timeAsString(timeSpent);

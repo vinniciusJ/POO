@@ -13,6 +13,8 @@ public class Card {
     // Declarando o valor e o naipe de cada carta
     private String value, suit;
     
+    Card(){ }
+    
     Card(String value, String suit){
         this.value = value;
         this.suit = suit;
